@@ -1,0 +1,17 @@
+hotkit:
+  r2dbc:
+    master-slave-mode:
+      master:
+        url: r2dbc:mysql://127.0.0.1:3306/r2dbc_stu
+        username: root
+        password:
+        pool:
+          size: 5
+          idel-timeout: 60
+      slave:
+        url: r2dbc:mysql://rm-wz9w2pj1crm4e2k80rw.mysql.rds.aliyuncs.com:3306/message?useUnicode=true&characterEncoding=UTF-8&useLocalSessionState=true&rewriteBatchedStat&zeroDateTimeBehavior=convertToNull
+        username: ycmanger_2b
+        password: cdYqa!#sadi&^cdUYwe98==
+        pool:
+          size: 5
+          idel-timeout: 60

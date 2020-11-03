@@ -1,6 +1,6 @@
 # hotkit-r2dbc
 
-hotkits项目集合中的一员，hotkit-r2dbc是对spring-data-r2dbc的扩展，为反应式编程提供声明式和编程式多数据源动态切换的支持。多数据源支持主从模式、Cluster模式，Cluster模式最多支持配置3个数据源，主从模式最多支持1主两从。
+hotkits项目集合中的一员，hotkit-r2dbc是对spring-data-r2dbc的扩展，为反应式编程提供声明式和编程式多数据源动态切换的支持。多数据源支持主从模式、Cluster模式，Cluster模式最多支持配置3个数据源，主从模式仅支持1主1从。
 
 ## 使用
 

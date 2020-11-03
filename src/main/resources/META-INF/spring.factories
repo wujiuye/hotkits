@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.wujiuye.hotkit.r2dbc.HotkitR2dbcAutoConfiguration
