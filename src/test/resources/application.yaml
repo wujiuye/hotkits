@@ -6,12 +6,12 @@ hotkit:
         username: root
         password:
         pool:
-          size: 5
+          max-size: 5
           idel-timeout: 60
       slave:
         url: r2dbc:mysql://127.0.0.1:3306/r2dbc_stu
         username: root
         password:
         pool:
-          size: 5
+          max-size: 5
           idel-timeout: 60
