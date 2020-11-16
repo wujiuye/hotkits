@@ -25,13 +25,11 @@ public class HotkitR2dbcRoutingConnectionFactory extends AbstractRoutingConnecti
     }
 
     public static <T> Mono<T> warpDataSource(Mono<T> mono, String dataSource) {
-        return Mono.subscriberContext().flatMap(context -> mono)
-                .subscriberContext(context -> context.put(DB_KEY, dataSource));
+        return mono.subscriberContext(context -> context.put(DB_KEY, dataSource));
     }
 
     public static <T> Flux<T> warpDataSource(Flux<T> flux, String dataSource) {
-        return Mono.subscriberContext().flatMapMany(context -> flux)
-                .subscriberContext(context -> context.put(DB_KEY, dataSource));
+        return flux.subscriberContext(f -> f.put(DB_KEY, dataSource));
     }
 
     @Override
