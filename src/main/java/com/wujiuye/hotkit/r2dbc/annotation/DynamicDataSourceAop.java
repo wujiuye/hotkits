@@ -34,9 +34,9 @@ public class DynamicDataSourceAop {
         Method method = signature.getMethod();
         R2dbcDataBase dataSource = method.getAnnotation(R2dbcDataBase.class);
         if (method.getReturnType() == Mono.class) {
-            return HotkitR2dbcRoutingConnectionFactory.warpDataSource((Mono<?>) pjp.proceed(), dataSource.value());
+            return HotkitR2dbcRoutingConnectionFactory.putDataSource((Mono<?>) pjp.proceed(), dataSource.value());
         } else {
-            return HotkitR2dbcRoutingConnectionFactory.warpDataSource((Flux<?>) pjp.proceed(), dataSource.value());
+            return HotkitR2dbcRoutingConnectionFactory.putDataSource((Flux<?>) pjp.proceed(), dataSource.value());
         }
     }
 
