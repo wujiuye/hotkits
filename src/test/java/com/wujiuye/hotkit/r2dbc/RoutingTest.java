@@ -33,7 +33,7 @@ public class RoutingTest extends SupporSpringBootTest {
         // 包装事务
         Mono<Void> txOperation = operator.transactional(atomicOperation);
         // 包装切换数据源
-        HotkitR2dbcRoutingConnectionFactory.warpDataSource(txOperation, MasterSlaveMode.Slave).subscribe();
+        HotkitR2dbcRoutingConnectionFactory.putDataSource(txOperation, MasterSlaveMode.Slave).subscribe();
         TimeUnit.SECONDS.sleep(Integer.MAX_VALUE);
     }
 

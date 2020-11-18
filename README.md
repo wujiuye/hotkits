@@ -123,7 +123,7 @@ public class PersonService {
 
 声明式切换数据源的实现是依赖编程式切换数据源实现的，因此，我们也可以直接编写代码切换数据源，而不需要将方法改为`public`暴露出去。
 
-只需要调用`HotkitR2dbcRoutingConnectionFactory`提供的静态方法`warpDataSource`将一个`Mono`或者一个`Flux`操作包装起来，并指定使用的数据源，代码如下。
+只需要调用`HotkitR2dbcRoutingConnectionFactory`提供的静态方法`putDataSource`为`Context`写入使用的数据源，代码如下。
 
 ```java
 public class RoutingTest extends SupporSpringBootTest {
@@ -149,11 +149,11 @@ public class RoutingTest extends SupporSpringBootTest {
         // 包装事务
         Mono<Void> txOperation = operator.transactional(atomicOperation);
         // 包装切换数据源
-        HotkitR2dbcRoutingConnectionFactory.warpDataSource(txOperation, MasterSlaveMode.Slave).subscribe();
+        HotkitR2dbcRoutingConnectionFactory.putDataSource(txOperation, MasterSlaveMode.Slave).subscribe();
         TimeUnit.SECONDS.sleep(Integer.MAX_VALUE);
     }
 
 }
 ```
 
-需要注意，如果需要使用事务，必须先调用`TransactionalOperator`对象的`transactional`方法，再调用`HotkitR2dbcRoutingConnectionFactory`的`warpDataSource`方法，让数据源的切换在开启事务之前完成切换。
+需要注意，如果需要使用事务，必须先调用`TransactionalOperator`对象的`transactional`方法，再调用`HotkitR2dbcRoutingConnectionFactory`的`putDataSource`方法。

@@ -24,22 +24,20 @@ public class HotkitR2dbcRoutingConnectionFactory extends AbstractRoutingConnecti
         setDefaultTargetConnectionFactory(defaultTarget);
     }
 
-    public static <T> Mono<T> warpDataSource(Mono<T> mono, String dataSource) {
+    public static <T> Mono<T> putDataSource(Mono<T> mono, String dataSource) {
         return mono.subscriberContext(context -> context.put(DB_KEY, dataSource));
     }
 
-    public static <T> Flux<T> warpDataSource(Flux<T> flux, String dataSource) {
+    public static <T> Flux<T> putDataSource(Flux<T> flux, String dataSource) {
         return flux.subscriberContext(f -> f.put(DB_KEY, dataSource));
     }
 
     @Override
     protected Mono<Object> determineCurrentLookupKey() {
-        return Mono.subscriberContext().flatMap(context -> {
+        return Mono.subscriberContext().handle((context, sink) -> {
             if (context.hasKey(DB_KEY)) {
-                return Mono.just(context.get(DB_KEY));
+                sink.next(context.get(DB_KEY));
             }
-            // 使用默认数据源
-            return Mono.empty();
         });
     }
 
