@@ -29,7 +29,7 @@ public class HotkitR2dbcRoutingConnectionFactory extends AbstractRoutingConnecti
     }
 
     public static <T> Flux<T> putDataSource(Flux<T> flux, String dataSource) {
-        return flux.subscriberContext(f -> f.put(DB_KEY, dataSource));
+        return flux.subscriberContext(context -> context.put(DB_KEY, dataSource));
     }
 
     @Override
