@@ -13,7 +13,7 @@
 <dependency>
     <groupId>com.github.wujiuye</groupId>
     <artifactId>hotkit-r2dbc</artifactId>
-    <version>1.1.0-RELEASE</version>
+    <version>1.2.0-RELEASE</version>
 </dependency>
 ```
 
