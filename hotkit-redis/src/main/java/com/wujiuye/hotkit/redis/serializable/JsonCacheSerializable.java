@@ -1,6 +1,6 @@
 package com.wujiuye.hotkit.redis.serializable;
 
-import com.msyc.common.json.JsonUtils;
+import com.wujiuye.hotkit.json.JsonUtils;
 
 /**
  * json序列化
