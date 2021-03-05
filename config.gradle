@@ -1,0 +1,4 @@
+ext {
+    group = 'com.github.wujiuye'
+    version = '2021.001.RC'
+}

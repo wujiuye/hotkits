@@ -1,0 +1,105 @@
+plugins {
+    id 'java'
+    // maven 发布插件
+    id 'maven-publish'
+    // 签名插件
+    id 'signing'
+}
+apply from:"../config.gradle"
+
+group ext.group
+version ext.version
+
+dependencies {
+    compileOnly('com.google.code.gson:gson:2.8.6')
+    compileOnly('com.fasterxml.jackson.core:jackson-databind:2.9.6')
+
+    compile('org.openjdk.jmh:jmh-core:1.23')
+    compile('org.openjdk.jmh:jmh-generator-annprocess:1.23')
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.2'
+    testCompileOnly 'org.projectlombok:lombok:1.18.2'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile('com.google.code.gson:gson:2.8.6')
+    testCompile('com.fasterxml.jackson.core:jackson-databind:2.9.6')
+}
+
+// 打包源码
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+// 生成 javadoc jar
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        // 推送
+        publishMyProject(MavenPublication) {
+            // 编译jar包
+            from components.java
+            // 打包源码
+            artifact sourcesJar
+            // javadoc
+            artifact javadocJar
+
+            pom {
+                name = "hotkit-json"
+                description = "hotkits项目集合中的一员，`JSON`适配器组件，让切换`JSON`解析框架只需要切换依赖包即可。"
+                url = "https://github.com/wujiuye/hotkits"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "wujiuye"
+                        name = "wujiuye"
+                        email = "419611821@qq.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/wujiuye/hotkits.git"
+                    developerConnection = "scm:git:https://github.com/wujiuye/hotkits.git"
+                    url = "https://github.com/wujiuye/hotkits"
+                }
+            }
+        }
+    }
+    // 到 https://oss.sonatype.org/#nexus-search; 搜索是否上传成功
+    repositories {
+        // 发布Release版本可在版本号后面带上'-RELEASE'，也可不带
+        maven {
+            name 'Release'
+            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            credentials {
+                username = "${NEXUS_USERNAME}"
+                password = "${NEXUS_PASSWORD}"
+            }
+        }
+        // 发布Snapshot快照版本必须在版本号后面加上'-SNAPSHOT'
+        maven {
+            name = 'Snapshot'
+            url = 'https://oss.sonatype.org/content/repositories/snapshots'
+            credentials {
+                username = "${NEXUS_USERNAME}"
+                password = "${NEXUS_PASSWORD}"
+            }
+        }
+    }
+}
+
+// 必须在 publishing 配置之后
+signing {
+    sign publishing.publications.publishMyProject
+}
+

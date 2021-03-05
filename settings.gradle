@@ -1,2 +1,7 @@
-rootProject.name = 'hotkit-r2dbc'
+rootProject.name = 'hotkits'
+
+include 'hotkit-r2dbc'
+include 'hotkit-json'
+include 'hotkit-redis'
+include 'hotkit-json-adapter'
 

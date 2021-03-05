@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.wujiuye.hotkit.json.webflux.WebFluxJsonConverterConfiguration,\
+com.wujiuye.hotkit.json.webmvc.WebMvcJsonConverterConfiguration
