@@ -52,7 +52,7 @@ publishing {
 
             pom {
                 name = "hotkit-json"
-                description = "hotkits项目集合中的一员，`JSON`适配器组件，让切换`JSON`解析框架只需要切换依赖包即可。"
+                description = "hotkits项目集合中的一员，JSON适配器组件，让切换JSON解析框架只需要切换依赖包即可。"
                 url = "https://github.com/wujiuye/hotkits"
                 licenses {
                     license {
