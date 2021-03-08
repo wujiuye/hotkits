@@ -4,4 +4,8 @@ include 'hotkit-r2dbc'
 include 'hotkit-json'
 include 'hotkit-redis'
 include 'hotkit-json-adapter'
+include 'hotkit-rpc-myfeign'
+include 'hotkit-rpc-myfeign-spring'
+include 'hotkit-util'
+include 'hotkit-spring-common'
 

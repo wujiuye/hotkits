@@ -1,0 +1,2 @@
+com.wujiuye.hotkit.rpc.myfeign.filter.DefaultRpcFilterChainBuilder
+com.wujiuye.hotkit.rpc.playback.PlaybackRpcFilterChainBuilder
