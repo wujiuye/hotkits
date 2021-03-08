@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.wujiuye.hotkit.spring.common.SpringContextHolder,\
+com.wujiuye.hotkit.spring.common.executor.AsyncExecutorConfiguration
