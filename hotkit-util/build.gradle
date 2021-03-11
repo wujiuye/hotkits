@@ -5,10 +5,9 @@ plugins {
     // 签名插件
     id 'signing'
 }
-apply from:"../config.gradle"
 
-group ext.group
-version ext.version
+group = 'com.github.wujiuye'
+version = '2021.002.RC'
 
 dependencies {
     compile 'org.openjdk.jol:jol-core:0.10'

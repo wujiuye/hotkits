@@ -6,10 +6,8 @@ plugins {
     id 'signing'
 }
 
-apply from: "../config.gradle"
-
-group ext.group
-version ext.version
+group = 'com.github.wujiuye'
+version = '2021.001.RC'
 
 dependencies {
     compile("${group}:hotkit-json:${version}")
