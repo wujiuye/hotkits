@@ -3,7 +3,10 @@ package com.wujiuye.hotkit.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,15 +16,28 @@ import java.util.List;
  */
 public class ReflectUtils {
 
-    /**
-     * 为对象的字段赋值
-     *
-     * @param obj   对象
-     * @param field 字段
-     * @param value 值
-     * @throws IllegalAccessException
-     */
-    public static void applyValueBy(Object obj, Field field, Object value) throws IllegalAccessException {
+    private final static Class<?>[] PRIMITIVE_CLASS = new Class[]{
+            boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class,
+            Boolean.class, Character.class, Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class,
+            String.class, BigDecimal.class, Date.class
+    };
+
+    public static class ValueOfTypeException extends RuntimeException {
+        public ValueOfTypeException(Class<?> tclass, Class<?> vclass) {
+            super("value type is " + vclass.getName() + ", cannot be converted to " + tclass.getName());
+        }
+    }
+
+    public static boolean isPrimitiveType(Class<?> tclass) {
+        for (Class<?> c : PRIMITIVE_CLASS) {
+            if (c == tclass) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void applyValueBy(Object obj, Field field, Object value) throws IllegalAccessException, ValueOfTypeException {
         Class<?> fieldType = field.getType();
         field.setAccessible(true);
         if (Integer.class.equals(fieldType)) {
@@ -36,10 +52,30 @@ public class ReflectUtils {
             field.set(obj, getBigDecimal(value));
         } else if (String.class.equals(fieldType)) {
             field.set(obj, value.toString());
+        } else if (Date.class.equals(fieldType)) {
+            field.set(obj, getDate(value));
         } else {
-            throw new RuntimeException("暂时不支持这种类型的自动映射值！class=" + obj.getClass()
-                    + ",field=" + field.getName()
-                    + ",fieldType=" + field.getType());
+            throw new ValueOfTypeException(fieldType, value.getClass());
+        }
+    }
+
+    public static <T> T getValueOfType(Object value, Class<T> tClass) throws ValueOfTypeException {
+        if (Integer.class.equals(tClass)) {
+            return (T) getInt(value);
+        } else if (Long.class.equals(tClass)) {
+            return (T) getLong(value);
+        } else if (Double.class.equals(tClass)) {
+            return (T) getDouble(value);
+        } else if (Float.class.equals(tClass)) {
+            return (T) getFloat(value);
+        } else if (BigDecimal.class.equals(tClass)) {
+            return (T) getBigDecimal(value);
+        } else if (String.class.equals(tClass)) {
+            return (T) value.toString();
+        } else if (Date.class.equals(tClass)) {
+            return (T) getDate(value);
+        } else {
+            throw new ValueOfTypeException(tClass, value.getClass());
         }
     }
 
@@ -107,6 +143,26 @@ public class ReflectUtils {
         } else {
             return null;
         }
+    }
+
+    private static Date getDate(Object value) {
+        if (value instanceof Long) {
+            return new Date((Long) value);
+        } else if (value instanceof String) {
+            String v = (String) value;
+            SimpleDateFormat sdf;
+            if (v.contains("HH")) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            } else {
+                sdf = new SimpleDateFormat("yyyy-MM-dd");
+            }
+            try {
+                return sdf.parse(v);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
     }
 
     public static String getMethodDescriptor(final Method method) {
