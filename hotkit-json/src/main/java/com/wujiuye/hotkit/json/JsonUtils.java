@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * json序列化适配器
@@ -33,24 +34,16 @@ public class JsonUtils {
         }
     }
 
+    private static AtomicReference<SerializeConfig> defaultSerializeConfig
+            = new AtomicReference<>(new SerializeConfig());
+
+    public static void setDefaultSerializeConfig(SerializeConfig config) {
+        defaultSerializeConfig.set(config);
+    }
+
     public static <T> String toJsonString(T obj) {
-        return toJsonString(obj, false, null);
-    }
-
-    public static <T> String toJsonString(T obj, boolean serializeNulls) {
-        return toJsonString(obj, serializeNulls, null);
-    }
-
-    /**
-     * 序列化
-     *
-     * @param obj
-     * @param serializeNulls 是否需要序列化值为null的字段
-     * @param <T>
-     * @return
-     */
-    public static <T> String toJsonString(T obj, boolean serializeNulls, String datePattern) {
-        return chooseJsonParser.toJsonString(obj, serializeNulls, datePattern);
+        SerializeConfig config = defaultSerializeConfig.get();
+        return chooseJsonParser.toJsonString(obj, config);
     }
 
     public static <T> T fromJson(String jsonStr, Class<T> tClass) {

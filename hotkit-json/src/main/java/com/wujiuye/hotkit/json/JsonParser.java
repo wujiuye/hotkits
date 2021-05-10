@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public interface JsonParser {
 
-    <T> String toJsonString(T obj, boolean serializeNulls, String pattern);
+    <T> String toJsonString(T obj, SerializeConfig config);
 
     <T> T fromJson(String jsonStr, Class<T> tClass);
 

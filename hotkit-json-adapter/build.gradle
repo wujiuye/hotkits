@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.github.wujiuye'
-version = '2021.001.RC'
+version = '2021.002.RC'
 
 dependencies {
     compile("${group}:hotkit-json:${version}")
