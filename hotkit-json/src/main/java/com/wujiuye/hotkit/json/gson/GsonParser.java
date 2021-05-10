@@ -3,6 +3,7 @@ package com.wujiuye.hotkit.json.gson;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wujiuye.hotkit.json.JsonParser;
+import com.wujiuye.hotkit.json.SerializeConfig;
 import com.wujiuye.hotkit.json.TypeReference;
 
 import java.io.InputStream;
@@ -37,17 +38,17 @@ public class GsonParser implements JsonParser {
     }
 
     @Override
-    public <T> String toJsonString(T obj, boolean serializeNulls, String pattern) {
-        String key = serializeNulls + ":" + pattern;
+    public <T> String toJsonString(T obj, SerializeConfig config) {
+        String key = config.isSerializeNulls() + ":" + config.getDateFormat();
         Gson gson = TO_JSON_GSON_MAP.get(key);
         if (gson == null) {
             GsonBuilder gsonBuilder = new GsonBuilder()
-                    .registerTypeAdapter(Date.class, new DateTypeAdapter(pattern))
-                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter(pattern))
+                    .registerTypeAdapter(Date.class, new DateTypeAdapter(config.getDateFormat()))
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter(config.getDateFormat()))
                     .registerTypeAdapter(Double.class, new DoubleTypeAdapter())
                     .registerTypeAdapter(String.class, new StringTypeAdapter())
                     .addSerializationExclusionStrategy(new GsonExclusionStrategy());
-            if (serializeNulls) {
+            if (config.isSerializeNulls()) {
                 gsonBuilder.serializeNulls();
             }
             gson = gsonBuilder.create();

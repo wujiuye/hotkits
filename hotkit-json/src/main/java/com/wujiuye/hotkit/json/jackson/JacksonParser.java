@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.wujiuye.hotkit.json.JsonParser;
+import com.wujiuye.hotkit.json.SerializeConfig;
 import com.wujiuye.hotkit.json.TypeReference;
 
 import java.io.IOException;
@@ -68,9 +69,9 @@ public class JacksonParser implements JsonParser {
     }
 
     @Override
-    public <T> String toJsonString(T obj, boolean serializeNulls, String datePattern) {
+    public <T> String toJsonString(T obj, SerializeConfig config) {
         try {
-            ObjectMapperSub objectMapper = getObjectMapper(serializeNulls, datePattern);
+            ObjectMapperSub objectMapper = getObjectMapper(config.isSerializeNulls(), config.getDateFormat());
             JacksonExclusionStrategy strategy = JacksonExclusionStrategy.getInstance(obj.getClass());
             if (strategy != null) {
                 objectMapper.putStrategy(obj.getClass(), strategy);
