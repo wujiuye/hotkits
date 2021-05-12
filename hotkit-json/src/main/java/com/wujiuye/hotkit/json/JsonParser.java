@@ -22,6 +22,10 @@ public interface JsonParser {
 
     <T> List<T> fromJsonArray(String jsonStr, TypeReference<List<T>> typeReference);
 
+    <T> List<T> fromJsonArray(InputStream jsonIn, TypeReference<List<T>> typeReference);
+
     <K, V> Map<K, V> fromJsonMap(String jsonStr, TypeReference<Map<K, V>> typeReference);
+
+    <K, V> Map<K, V> fromJsonMap(InputStream jsonIn, TypeReference<Map<K, V>> typeReference);
 
 }

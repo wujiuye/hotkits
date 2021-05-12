@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * gson
@@ -24,7 +22,6 @@ import java.util.concurrent.ConcurrentMap;
 public class GsonParser implements JsonParser {
 
     private static final Gson FROM_JSON_GSON;
-    private static final ConcurrentMap<String, Gson> TO_JSON_GSON_MAP;
 
     static {
         GsonBuilder gsonBuilder = new GsonBuilder()
@@ -34,27 +31,20 @@ public class GsonParser implements JsonParser {
                 .registerTypeAdapter(String.class, new StringTypeAdapter())
                 .addDeserializationExclusionStrategy(new GsonExclusionStrategy());
         FROM_JSON_GSON = gsonBuilder.create();
-        TO_JSON_GSON_MAP = new ConcurrentHashMap<>();
     }
 
     @Override
     public <T> String toJsonString(T obj, SerializeConfig config) {
-        String key = config.isSerializeNulls() + ":" + config.getDateFormat();
-        Gson gson = TO_JSON_GSON_MAP.get(key);
-        if (gson == null) {
-            GsonBuilder gsonBuilder = new GsonBuilder()
-                    .registerTypeAdapter(Date.class, new DateTypeAdapter(config.getDateFormat()))
-                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter(config.getDateFormat()))
-                    .registerTypeAdapter(Double.class, new DoubleTypeAdapter())
-                    .registerTypeAdapter(String.class, new StringTypeAdapter())
-                    .addSerializationExclusionStrategy(new GsonExclusionStrategy());
-            if (config.isSerializeNulls()) {
-                gsonBuilder.serializeNulls();
-            }
-            gson = gsonBuilder.create();
-            TO_JSON_GSON_MAP.putIfAbsent(key, gson);
+        GsonBuilder gsonBuilder = new GsonBuilder()
+                .registerTypeAdapter(Date.class, new DateTypeAdapter(config.getDateFormat()))
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter(config.getDateFormat()))
+                .registerTypeAdapter(Double.class, new DoubleTypeAdapter())
+                .registerTypeAdapter(String.class, new StringTypeAdapter())
+                .addSerializationExclusionStrategy(new GsonExclusionStrategy());
+        if (config.isSerializeNulls()) {
+            gsonBuilder.serializeNulls();
         }
-        return gson.toJson(obj);
+        return gsonBuilder.create().toJson(obj);
     }
 
     @Override
@@ -83,8 +73,18 @@ public class GsonParser implements JsonParser {
     }
 
     @Override
+    public <T> List<T> fromJsonArray(InputStream jsonIn, TypeReference<List<T>> typeReference) {
+        return FROM_JSON_GSON.fromJson(new InputStreamReader(jsonIn), typeReference.getType());
+    }
+
+    @Override
     public <K, V> Map<K, V> fromJsonMap(String jsonStr, TypeReference<Map<K, V>> typeReference) {
         return FROM_JSON_GSON.fromJson(jsonStr, typeReference.getType());
+    }
+
+    @Override
+    public <K, V> Map<K, V> fromJsonMap(InputStream jsonIn, TypeReference<Map<K, V>> typeReference) {
+        return FROM_JSON_GSON.fromJson(new InputStreamReader(jsonIn), typeReference.getType());
     }
 
 }

@@ -53,13 +53,6 @@ public class JsonUtils {
         return chooseJsonParser.fromJson(jsonStr, tClass);
     }
 
-    public static <K, V> Map<K, V> fromJsonMap(String jsonStr, TypeReference<Map<K, V>> typeReference) {
-        if (StringUtils.isNullOrEmpty(jsonStr)) {
-            return null;
-        }
-        return chooseJsonParser.fromJsonMap(jsonStr, typeReference);
-    }
-
     public static <T> T fromJson(InputStream jsonIn, Class<T> tClass) {
         return chooseJsonParser.fromJson(jsonIn, tClass);
     }
@@ -77,6 +70,21 @@ public class JsonUtils {
             return null;
         }
         return chooseJsonParser.fromJsonArray(jsonStr, typeReference);
+    }
+
+    public static <T> List<T> fromJsonArray(InputStream jsonIn, TypeReference<List<T>> typeReference) {
+        return chooseJsonParser.fromJsonArray(jsonIn, typeReference);
+    }
+
+    public static <K, V> Map<K, V> fromJsonMap(String jsonStr, TypeReference<Map<K, V>> typeReference) {
+        if (StringUtils.isNullOrEmpty(jsonStr)) {
+            return null;
+        }
+        return chooseJsonParser.fromJsonMap(jsonStr, typeReference);
+    }
+
+    public static <K, V> Map<K, V> fromJsonMap(InputStream jsonIn, TypeReference<Map<K, V>> typeReference) {
+        return chooseJsonParser.fromJsonMap(jsonIn, typeReference);
     }
 
 }

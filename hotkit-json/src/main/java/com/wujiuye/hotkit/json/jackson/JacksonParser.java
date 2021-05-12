@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,6 @@ import java.util.Map;
 public class JacksonParser implements JsonParser {
 
     private final static ObjectMapperSub FROM_JSON_JACKSON;
-    private static Map<String, ObjectMapperSub> OBJECT_MAPPER_MAP = new HashMap<>();
 
     static {
         ObjectMapperSub objectMapper = new ObjectMapperSub();
@@ -42,29 +40,17 @@ public class JacksonParser implements JsonParser {
     }
 
     private ObjectMapperSub getObjectMapper(boolean serializeNulls, String datePattern) {
-        String key = (datePattern == null ? "null" : datePattern) + "::" + serializeNulls;
-        ObjectMapperSub objectMapper = OBJECT_MAPPER_MAP.get(key);
-        if (objectMapper == null) {
-            synchronized (this) {
-                objectMapper = OBJECT_MAPPER_MAP.get(key);
-                if (objectMapper == null) {
-                    objectMapper = new ObjectMapperSub();
-                    objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-                    if (!serializeNulls) {
-                        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                    }
-                    SimpleModule timeModule = new SimpleModule();
-                    timeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(8, datePattern));
-                    timeModule.addSerializer(Date.class, new DateSerializer(datePattern));
-                    timeModule.addSerializer(Double.class, new DoubleSerializer());
-                    timeModule.addSerializer(String.class, new StringSerializer());
-                    objectMapper.registerModule(timeModule);
-                    Map<String, ObjectMapperSub> newMap = new HashMap<>(OBJECT_MAPPER_MAP);
-                    newMap.put(key, objectMapper);
-                    OBJECT_MAPPER_MAP = newMap;
-                }
-            }
+        ObjectMapperSub objectMapper = new ObjectMapperSub();
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        if (!serializeNulls) {
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         }
+        SimpleModule timeModule = new SimpleModule();
+        timeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(8, datePattern));
+        timeModule.addSerializer(Date.class, new DateSerializer(datePattern));
+        timeModule.addSerializer(Double.class, new DoubleSerializer());
+        timeModule.addSerializer(String.class, new StringSerializer());
+        objectMapper.registerModule(timeModule);
         return objectMapper;
     }
 
@@ -137,9 +123,37 @@ public class JacksonParser implements JsonParser {
     }
 
     @Override
+    public <T> List<T> fromJsonArray(InputStream jsonIn, TypeReference<List<T>> typeReference) {
+        try {
+            return FROM_JSON_JACKSON.readValue(jsonIn, new com.fasterxml.jackson.core.type.TypeReference<List<T>>() {
+                @Override
+                public Type getType() {
+                    return typeReference.getType();
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public <K, V> Map<K, V> fromJsonMap(String jsonStr, TypeReference<Map<K, V>> typeReference) {
         try {
             return FROM_JSON_JACKSON.readValue(jsonStr, new com.fasterxml.jackson.core.type.TypeReference<Map<K, V>>() {
+                @Override
+                public Type getType() {
+                    return typeReference.getType();
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public <K, V> Map<K, V> fromJsonMap(InputStream jsonIn, TypeReference<Map<K, V>> typeReference) {
+        try {
+            return FROM_JSON_JACKSON.readValue(jsonIn, new com.fasterxml.jackson.core.type.TypeReference<Map<K, V>>() {
                 @Override
                 public Type getType() {
                     return typeReference.getType();
